@@ -1,0 +1,284 @@
+{% extends "base.html" %}
+
+{% block title %}Model Metrics - Diabetes Prediction{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Header -->
+        <div class="text-center mb-5">
+            <div class="mb-3">
+                <i class="fas fa-chart-line text-primary" style="font-size: 3rem;"></i>
+            </div>
+            <h1 class="display-4">Model Performance Metrics</h1>
+            <p class="lead text-muted">
+                Detailed analysis of the Logistic Regression model's performance on the test dataset.
+            </p>
+        </div>
+
+        <!-- Overview Cards -->
+        <div class="row mb-5">
+            <div class="col-md-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-bullseye text-success mb-3" style="font-size: 2rem;"></i>
+                        <h3 class="text-success">{{ "%.2f"|format(metrics.accuracy * 100) }}%</h3>
+                        <h6 class="card-title">Accuracy</h6>
+                        <p class="card-text small text-muted">Overall correct predictions</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-database text-info mb-3" style="font-size: 2rem;"></i>
+                        <h3 class="text-info">{{ metrics.test_size }}</h3>
+                        <h6 class="card-title">Test Samples</h6>
+                        <p class="card-text small text-muted">Total test cases</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-plus-circle text-warning mb-3" style="font-size: 2rem;"></i>
+                        <h3 class="text-warning">{{ metrics.positive_cases }}</h3>
+                        <h6 class="card-title">Diabetic Cases</h6>
+                        <p class="card-text small text-muted">Positive samples</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-minus-circle text-success mb-3" style="font-size: 2rem;"></i>
+                        <h3 class="text-success">{{ metrics.negative_cases }}</h3>
+                        <h6 class="card-title">Non-Diabetic Cases</h6>
+                        <p class="card-text small text-muted">Negative samples</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Classification Report -->
+        <div class="row mb-5">
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-table me-2"></i>
+                            Classification Report
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Class</th>
+                                        <th>Precision</th>
+                                        <th>Recall</th>
+                                        <th>F1-Score</th>
+                                        <th>Support</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Non-Diabetic</strong></td>
+                                        <td>{{ "%.3f"|format(metrics.classification_report['0']['precision']) }}</td>
+                                        <td>{{ "%.3f"|format(metrics.classification_report['0']['recall']) }}</td>
+                                        <td>{{ "%.3f"|format(metrics.classification_report['0']['f1-score']) }}</td>
+                                        <td>{{ metrics.classification_report['0']['support']|int }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Diabetic</strong></td>
+                                        <td>{{ "%.3f"|format(metrics.classification_report['1']['precision']) }}</td>
+                                        <td>{{ "%.3f"|format(metrics.classification_report['1']['recall']) }}</td>
+                                        <td>{{ "%.3f"|format(metrics.classification_report['1']['f1-score']) }}</td>
+                                        <td>{{ metrics.classification_report['1']['support']|int }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- Macro and Weighted Averages -->
+                        <div class="mt-3">
+                            <h6>Averages:</h6>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <small class="text-muted">Macro Average:</small><br>
+                                    <small>F1: {{ "%.3f"|format(metrics.classification_report['macro avg']['f1-score']) }}</small>
+                                </div>
+                                <div class="col-sm-6">
+                                    <small class="text-muted">Weighted Average:</small><br>
+                                    <small>F1: {{ "%.3f"|format(metrics.classification_report['weighted avg']['f1-score']) }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Model Information -->
+            <div class="col-lg-6">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-cog me-2"></i>
+                            Model Information
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h6><i class="fas fa-robot me-2"></i>Algorithm</h6>
+                            <p class="mb-3">Logistic Regression</p>
+                            
+                            <h6><i class="fas fa-database me-2"></i>Dataset</h6>
+                            <p class="mb-3">PIMA Indian Diabetes Dataset</p>
+                            
+                            <h6><i class="fas fa-list me-2"></i>Features</h6>
+                            <ul class="list-unstyled small">
+                                <li>• Pregnancies</li>
+                                <li>• Glucose Level</li>
+                                <li>• Blood Pressure</li>
+                                <li>• Skin Thickness</li>
+                                <li>• Insulin Level</li>
+                                <li>• BMI</li>
+                                <li>• Diabetes Pedigree Function</li>
+                                <li>• Age</li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Key Metrics Explanation -->
+                        <div class="mt-3">
+                            <h6>Metric Definitions:</h6>
+                            <small class="text-muted">
+                                <strong>Precision:</strong> Of all positive predictions, how many were correct<br>
+                                <strong>Recall:</strong> Of all actual positives, how many were correctly identified<br>
+                                <strong>F1-Score:</strong> Harmonic mean of precision and recall
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confusion Matrix -->
+        <div class="row mb-5">
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-th me-2"></i>
+                            Confusion Matrix
+                        </h4>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="data:image/png;base64,{{ confusion_matrix_img }}" 
+                             class="img-fluid" 
+                             alt="Confusion Matrix"
+                             style="max-height: 400px;">
+                        
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                The confusion matrix shows the actual vs predicted classifications.
+                                Darker blue indicates higher counts.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Feature Importance -->
+            <div class="col-lg-6">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-weight-hanging me-2"></i>
+                            Feature Importance
+                        </h4>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="data:image/png;base64,{{ feature_importance_img }}" 
+                             class="img-fluid" 
+                             alt="Feature Importance"
+                             style="max-height: 400px;">
+                        
+                        <div class="mt-3">
+                            <small class="text-muted">
+                                Shows the relative importance of each feature in the model's predictions.
+                                Blue bars indicate positive correlation, red bars indicate negative correlation.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Importance Table -->
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-sort-numeric-down me-2"></i>
+                            Feature Coefficients
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Feature</th>
+                                        <th>Coefficient</th>
+                                        <th>Impact</th>
+                                        <th>Interpretation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% set feature_names = ['Pregnancies', 'Glucose', 'Blood Pressure', 'Skin Thickness', 'Insulin', 'BMI', 'Diabetes Pedigree', 'Age'] %}
+                                    {% for i in range(feature_names|length) %}
+                                    <tr>
+                                        <td><strong>{{ feature_names[i] }}</strong></td>
+                                        <td>
+                                            <span class="{% if metrics.feature_importance[i] > 0 %}text-primary{% else %}text-danger{% endif %}">
+                                                {{ "%.4f"|format(metrics.feature_importance[i]) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if metrics.feature_importance[i]|abs > 0.5 %}
+                                                <span class="badge bg-danger">High</span>
+                                            {% elif metrics.feature_importance[i]|abs > 0.2 %}
+                                                <span class="badge bg-warning text-dark">Medium</span>
+                                            {% else %}
+                                                <span class="badge bg-success">Low</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="small">
+                                            {% if metrics.feature_importance[i] > 0 %}
+                                                Increases diabetes risk
+                                            {% else %}
+                                                Decreases diabetes risk
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center">
+            <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-arrow-left me-2"></i>
+                Back to Prediction Form
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

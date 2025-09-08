@@ -1,0 +1,245 @@
+{% extends "base.html" %}
+
+{% block title %}Diabetes Prediction - Home{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- Header Section -->
+        <div class="text-center mb-5">
+            <div class="mb-4">
+                <i class="fas fa-heartbeat text-primary" style="font-size: 4rem;"></i>
+            </div>
+            <h1 class="display-4 mb-3">Diabetes Risk Assessment</h1>
+            <p class="lead text-muted">
+                Enter your medical information below to assess your diabetes risk using our machine learning model.
+            </p>
+        </div>
+
+        <!-- Prediction Form -->
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-clipboard-list me-2"></i>
+                    Medical Information Form
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('predict') }}" id="predictionForm">
+                    <div class="row">
+                        <!-- Pregnancies -->
+                        <div class="col-md-6 mb-3">
+                            <label for="pregnancies" class="form-label">
+                                <i class="fas fa-baby me-2"></i>
+                                Number of Pregnancies
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="pregnancies" 
+                                   name="pregnancies" 
+                                   min="0" 
+                                   max="20" 
+                                   step="1" 
+                                   required>
+                            <div class="form-text">Enter the number of times pregnant (0 if male or never pregnant)</div>
+                        </div>
+
+                        <!-- Glucose -->
+                        <div class="col-md-6 mb-3">
+                            <label for="glucose" class="form-label">
+                                <i class="fas fa-tint me-2"></i>
+                                Glucose Level (mg/dL)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="glucose" 
+                                   name="glucose" 
+                                   min="44" 
+                                   max="300" 
+                                   step="1" 
+                                   required>
+                            <div class="form-text">Plasma glucose concentration (normal: 70-100 mg/dL fasting)</div>
+                        </div>
+
+                        <!-- Blood Pressure -->
+                        <div class="col-md-6 mb-3">
+                            <label for="blood_pressure" class="form-label">
+                                <i class="fas fa-heartbeat me-2"></i>
+                                Blood Pressure (mmHg)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="blood_pressure" 
+                                   name="blood_pressure" 
+                                   min="24" 
+                                   max="200" 
+                                   step="1" 
+                                   required>
+                            <div class="form-text">Diastolic blood pressure (normal: less than 80 mmHg)</div>
+                        </div>
+
+                        <!-- Skin Thickness -->
+                        <div class="col-md-6 mb-3">
+                            <label for="skin_thickness" class="form-label">
+                                <i class="fas fa-ruler me-2"></i>
+                                Skin Thickness (mm)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="skin_thickness" 
+                                   name="skin_thickness" 
+                                   min="7" 
+                                   max="100" 
+                                   step="1" 
+                                   required>
+                            <div class="form-text">Triceps skin fold thickness</div>
+                        </div>
+
+                        <!-- Insulin -->
+                        <div class="col-md-6 mb-3">
+                            <label for="insulin" class="form-label">
+                                <i class="fas fa-syringe me-2"></i>
+                                Insulin Level (μU/mL)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="insulin" 
+                                   name="insulin" 
+                                   min="14" 
+                                   max="1000" 
+                                   step="1" 
+                                   required>
+                            <div class="form-text">2-Hour serum insulin (normal: 16-166 μU/mL)</div>
+                        </div>
+
+                        <!-- BMI -->
+                        <div class="col-md-6 mb-3">
+                            <label for="bmi" class="form-label">
+                                <i class="fas fa-weight me-2"></i>
+                                BMI (kg/m²)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="bmi" 
+                                   name="bmi" 
+                                   min="10" 
+                                   max="70" 
+                                   step="0.1" 
+                                   required>
+                            <div class="form-text">Body Mass Index (normal: 18.5-24.9)</div>
+                        </div>
+
+                        <!-- Diabetes Pedigree Function -->
+                        <div class="col-md-6 mb-3">
+                            <label for="diabetes_pedigree" class="form-label">
+                                <i class="fas fa-dna me-2"></i>
+                                Diabetes Pedigree Function
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="diabetes_pedigree" 
+                                   name="diabetes_pedigree" 
+                                   min="0.078" 
+                                   max="3.0" 
+                                   step="0.001" 
+                                   required>
+                            <div class="form-text">Family history of diabetes (0.078-2.42)</div>
+                        </div>
+
+                        <!-- Age -->
+                        <div class="col-md-6 mb-3">
+                            <label for="age" class="form-label">
+                                <i class="fas fa-calendar me-2"></i>
+                                Age (years)
+                            </label>
+                            <input type="number" 
+                                   class="form-control" 
+                                   id="age" 
+                                   name="age" 
+                                   min="18" 
+                                   max="120" 
+                                   step="1" 
+                                   required>
+                            <div class="form-text">Age in years</div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-calculator me-2"></i>
+                            Predict Diabetes Risk
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Information Section -->
+        <div class="row mt-5">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            About This Tool
+                        </h5>
+                        <p class="card-text">
+                            This prediction system uses a Logistic Regression model trained on the 
+                            PIMA Indian Diabetes Dataset to assess diabetes risk. The model analyzes 
+                            various health indicators to provide a risk assessment.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                            Important Disclaimer
+                        </h5>
+                        <p class="card-text">
+                            This tool is for educational and informational purposes only. It should 
+                            not be used as a substitute for professional medical advice, diagnosis, 
+                            or treatment. Always consult with a healthcare provider.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('predictionForm').addEventListener('submit', function(e) {
+    // Basic client-side validation
+    const requiredFields = ['glucose', 'bmi', 'age'];
+    let isValid = true;
+    
+    requiredFields.forEach(function(fieldId) {
+        const field = document.getElementById(fieldId);
+        if (!field.value || parseFloat(field.value) <= 0) {
+            field.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            field.classList.remove('is-invalid');
+        }
+    });
+    
+    if (!isValid) {
+        e.preventDefault();
+        alert('Please fill in all required fields with valid positive values.');
+    }
+});
+
+// Remove validation styling on input
+document.querySelectorAll('input[type="number"]').forEach(function(input) {
+    input.addEventListener('input', function() {
+        this.classList.remove('is-invalid');
+    });
+});
+</script>
+{% endblock %}

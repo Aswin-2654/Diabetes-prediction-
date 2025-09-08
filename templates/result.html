@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Result - Diabetes Prediction{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- Result Header -->
+        <div class="text-center mb-4">
+            <div class="mb-3">
+                {% if result.prediction == 'Diabetic' %}
+                    <i class="fas fa-exclamation-triangle text-warning" style="font-size: 3rem;"></i>
+                {% else %}
+                    <i class="fas fa-check-circle text-success" style="font-size: 3rem;"></i>
+                {% endif %}
+            </div>
+            <h1 class="display-4">Prediction Result</h1>
+        </div>
+
+        <!-- Main Result Card -->
+        <div class="card shadow-lg mb-4">
+            <div class="card-header {% if result.prediction == 'Diabetic' %}bg-warning text-dark{% else %}bg-success text-white{% endif %}">
+                <h3 class="card-title mb-0 text-center">
+                    <i class="fas fa-{% if result.prediction == 'Diabetic' %}exclamation-triangle{% else %}check-circle{% endif %} me-2"></i>
+                    {{ result.prediction }}
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h5 class="text-muted">Prediction</h5>
+                        <h3 class="{% if result.prediction == 'Diabetic' %}text-warning{% else %}text-success{% endif %}">
+                            {{ result.prediction }}
+                        </h3>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="text-muted">Probability</h5>
+                        <h3 class="{% if result.probability > 0.5 %}text-warning{% else %}text-success{% endif %}">
+                            {{ "%.1f"|format(result.probability * 100) }}%
+                        </h3>
+                    </div>
+                    <div class="col-md-4">
+                        <h5 class="text-muted">Risk Level</h5>
+                        <h3 class="{% if result.risk_level == 'High' %}text-danger{% elif result.risk_level == 'Medium' %}text-warning{% else %}text-success{% endif %}">
+                            {{ result.risk_level }}
+                        </h3>
+                    </div>
+                </div>
+
+                <!-- Risk Level Bar -->
+                <div class="mt-4">
+                    <h6 class="mb-3">Risk Assessment</h6>
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar 
+                            {% if result.risk_level == 'High' %}bg-danger{% elif result.risk_level == 'Medium' %}bg-warning{% else %}bg-success{% endif %}" 
+                            role="progressbar" 
+                            style="width: {{ result.probability * 100 }}%">
+                            {{ "%.1f"|format(result.probability * 100) }}%
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-2">
+                        <small class="text-success">Low Risk</small>
+                        <small class="text-warning">Medium Risk</small>
+                        <small class="text-danger">High Risk</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Summary -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-clipboard-list me-2"></i>
+                    Input Summary
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-baby me-2"></i>Pregnancies:</span>
+                                <strong>{{ result.input_data.pregnancies|int }}</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-tint me-2"></i>Glucose:</span>
+                                <strong>{{ result.input_data.glucose|round(1) }} mg/dL</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-heartbeat me-2"></i>Blood Pressure:</span>
+                                <strong>{{ result.input_data.blood_pressure|round(1) }} mmHg</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-ruler me-2"></i>Skin Thickness:</span>
+                                <strong>{{ result.input_data.skin_thickness|round(1) }} mm</strong>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-syringe me-2"></i>Insulin:</span>
+                                <strong>{{ result.input_data.insulin|round(1) }} μU/mL</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-weight me-2"></i>BMI:</span>
+                                <strong>{{ result.input_data.bmi|round(1) }} kg/m²</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-dna me-2"></i>Diabetes Pedigree:</span>
+                                <strong>{{ result.input_data.diabetes_pedigree|round(3) }}</strong>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span><i class="fas fa-calendar me-2"></i>Age:</span>
+                                <strong>{{ result.input_data.age|int }} years</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-info text-white">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Recommendations
+                </h4>
+            </div>
+            <div class="card-body">
+                {% if result.prediction == 'Diabetic' %}
+                    <div class="alert alert-warning" role="alert">
+                        <h6><i class="fas fa-exclamation-triangle me-2"></i>High Risk Detected</h6>
+                        <ul class="mb-0">
+                            <li>Consult with a healthcare provider immediately for proper evaluation</li>
+                            <li>Consider getting a comprehensive diabetes screening test</li>
+                            <li>Monitor blood glucose levels regularly</li>
+                            <li>Maintain a healthy diet low in sugar and refined carbohydrates</li>
+                            <li>Engage in regular physical activity as recommended by your doctor</li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <div class="alert alert-success" role="alert">
+                        <h6><i class="fas fa-check-circle me-2"></i>Lower Risk Detected</h6>
+                        <ul class="mb-0">
+                            <li>Continue maintaining a healthy lifestyle</li>
+                            <li>Regular health check-ups are still important</li>
+                            <li>Maintain a balanced diet and regular exercise</li>
+                            <li>Monitor weight and BMI within healthy ranges</li>
+                            <li>Stay aware of diabetes risk factors and family history</li>
+                        </ul>
+                    </div>
+                {% endif %}
+                
+                <div class="alert alert-info mt-3" role="alert">
+                    <h6><i class="fas fa-info-circle me-2"></i>Important Note</h6>
+                    <p class="mb-0">
+                        This prediction is based on a machine learning model and should not replace professional medical advice. 
+                        Always consult with qualified healthcare providers for accurate diagnosis and treatment.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="text-center">
+            <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-redo me-2"></i>
+                Make Another Prediction
+            </a>
+            <a href="{{ url_for('metrics') }}" class="btn btn-secondary btn-lg">
+                <i class="fas fa-chart-line me-2"></i>
+                View Model Performance
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
